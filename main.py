@@ -1,10 +1,9 @@
-from re import T
 from pull_tweets import *
 import matplotlib.pyplot as plt
 
 def main():
     #get tweets
-    tweets = pull_tweets(amount=100, wordle_id=55)
+    tweets = pull_tweets("eng", 10_000)
     tweet_amount = len(tweets['tweet_text'])
     
     #drop if format isn't correct
@@ -24,9 +23,15 @@ def main():
             tweets['tweet_text'].value_counts()["5/6"] * 5 +
             tweets['tweet_text'].value_counts()["6/6"] * 6)/(total - tweets['tweet_text'].value_counts()["X/6"]), 3)
     
-    plt.title(
-        f"Distribución para el Wordle {tweets['wordle_id'][1]}: Puntuación media = {mean}\n n={tweet_amount}")
-    plt.show()
+    if tweets["wordle_id"][1] < 200:
+        plt.title(
+            f"Distribución para el Wordle {tweets['wordle_id'][1]}: Puntuación media = {mean}\n n={tweet_amount}")
+        plt.show()
+    
+    else:
+        plt.title(
+            f"Distribution for Wordle {tweets['wordle_id'][1]}: Average Score = {mean}\n n={tweet_amount}")
+        plt.show()
 
 if __name__ == '__main__':
     main()

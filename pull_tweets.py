@@ -1,14 +1,8 @@
-
 import tweepy
 import pandas as pd
-import numpy as np
-from collections import Counter
 from datetime import datetime
-import os
 import pytz
 import re
-import time
-
 
 
 def pull_tweets(language="esp", amount=10, wordle_id=None):
@@ -25,7 +19,7 @@ def pull_tweets(language="esp", amount=10, wordle_id=None):
     """
     
     #API identification
-    mykeys = open("C:/Users/raulm/Desktop/Raúl/#Formación/#Programación/Python/python_work/wordle_score/keys.txt", "r").readlines()
+    mykeys = open("keys.txt", "r").readlines()
     
     api_key = mykeys[0].rstrip()
     api_key_secret = mykeys[1].rstrip()
@@ -36,19 +30,24 @@ def pull_tweets(language="esp", amount=10, wordle_id=None):
     auth.set_access_token(access_token, access_token_secret)
     api = tweepy.API(auth, wait_on_rate_limit=True)
     
-    #if language == "eng":
-        #future implementation
-
-    
+    if language == "eng":
+        timezone = "US/Pacific"
+        start_date = datetime(2021, 6, 19)
+        query = "Wordle "
+    else:
+        timezone = "Europe/Madrid"
+        start_date = datetime(2022, 1, 6)
+        query = "Wordle (ES) #"
+        
     #if wordle_id not given, take today's id
     if wordle_id is None:
-        wordle_start = pytz.timezone("Europe/Madrid").localize(datetime(2022, 1, 6))
-        now = pytz.utc.localize(datetime.now()).astimezone(pytz.timezone("Europe/Madrid"))
+        wordle_start = pytz.timezone(timezone).localize(start_date)
+        now = pytz.utc.localize(datetime.now()).astimezone(pytz.timezone(timezone))
 
         wordle_id = (now-wordle_start).days
     
     wordle_tweets = []
-    search_term = f"Wordle (ES) #{wordle_id}"
+    search_term = f"{query}{wordle_id}"
     tweet_amount = amount
     cursor = tweepy.Cursor(api.search_tweets, q=search_term)
     tweets = list(cursor.items(tweet_amount))
